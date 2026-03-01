@@ -1,47 +1,65 @@
-``` markdown
-# Neurosnatch: Adaptive AI-Powered Storytelling Engine
+# Neurosnatch 🧠🎬
+> **You watch, the engine feels, the story shifts.**
+<img width="1920" height="1080" alt="vlcsnap-2026-03-01-12h52m43s257" src="https://github.com/user-attachments/assets/9136b044-9e4b-49ab-82bc-8703630fef9e" />
 
-## Overview
+Neurosnatch is an adaptive, AI-powered storytelling engine that dynamically changes the narrative of a film based on the viewer's subconscious brain activity. As we get flooded with AI-generated content, new forms of media consumption will emerge - including personalised, eeg based films. Past attempts at interactive films, such as Netflix’s *Bandersnatch*, have been limited by the cinematic illusion-breaking nature of conscious user input. Neurosnatch solves this by removing the remote control and using raw EEG data to steer the story seamlessly.
 
-Neurosnatch is an adaptive, AI-powered storytelling engine designed to revolutionize media consumption. It moves beyond traditional interactive films, which are hindered by high production costs and illusion-breaking user input, by allowing the story to shift based on the viewer's unconscious neuro-engagement data.
+Worked on during the Imperial Neurotech Hackathon
 
-The project is positioned to own a new form of media consumption that will emerge as the internet becomes flooded with high-quality AI-generated video content.
+## 🗂️ Repository Structure
+This repository contains the full prototype for the Neurosnatch engine:
 
-## Technology & Mechanism
+- **`eeg.py`**: The EEG analysis and hardware script. It connects to the headset, processes the brainwaves (tracking alpha wave desynchronization), and sends the user's subconscious decision to the server.
+- **`server.py`**: A lightweight Flask server that acts as the bridge between the EEG script and the video player frontend. 
+- **`index.html`**: The interactive web frontend. It plays the initial clips, polls the server for the user's brainwave decision, and seamlessly transitions to the chosen ending.
+- **Video Assets (`.mp4`)**: The branching video clips (`calm_clip`, `excited_clip`, `calm_ending`, `excited_ending`).
 
-The core mechanism of Neurosnatch involves using electroencephalography (EEG) to track a viewer's brain activity and determine their level of engagement with the presented video content.
+*(Note: Depending on how the developer configured `server.py`, the video files may need to be placed in a `videos/` folder before running).*
 
-### Components
+## ⚙️ How It Works
+Our engine uses a **g.tec Unicorn Hybrid Black EEG** headset to track the parietal alpha wave intensity of the viewer as they watch carefully crafted scenes.
 
-*   **EEG Device:** A g.tec Unicorn Hybrid Black EEG headset (used in the initial demo).
-*   **Target Signal:** The model tracks the intensity of **alpha brain waves** in the **parietal region** of the brain.
-*   **Engagement Metric:** A **lower average alpha wave amplitude** in the parietal region is assumed to correspond to **higher engagement** (alpha wave "desynchronisation" correlates with increased attention and interest).
-*   **Story Adaptation:** The video player selects the next scene by recognizing the extract with the lowest alpha wave power as more interesting for the viewer.
+1. **Monitor & Track:** Extract real-time brainwave data from the viewer.
+2. **Analyze Engagement:** We calculate the average alpha wave amplitude in the parietal region. Lower alpha wave power ("desynchronization") correlates with higher attention, interest, and engagement.
+3. **Adapt the Story:** The algorithm determines which scene the viewer engaged with the most and automatically POSTs the decision to the server. The video player then proceeds with the corresponding branching storyline.
 
-### Demo Implementation
+## 🚀 How to Run the Demo
 
-The current demo presents the viewer with a movie consisting of two contrasting scenes (e.g., one joyful and one darker). The algorithm:
-1.  Measures the viewer's parietal alpha wave intensity for each scene.
-2.  Identifies the scene that elicited the lowest alpha wave power.
-3.  Automatically selects one of two possible third videos to continue the narrative, adapting the story in real-time based on the viewer's subconscious preference.
+### 1. Install Dependencies
+Ensure you have Python installed, then install the required packages:
 
-## Current Technical Limitations & Future Improvements
-
-The current demo and prototype have several technical limitations that outline a clear roadmap for future development:
-
-| Limitation | Description | Future Improvement Goal |
-| :--- | :--- | :--- |
-| **No Prefrontal EEG (No Alpha Asymmetry)** | The 8-channel EEG used lacked channels F3 & F4 (prefrontal cortex). This prevents the measurement of **alpha asymmetry**, which is used to determine positive/negative emotional feedback (approach vs. avoid signals). | Utilize higher-channel EEG or specific electrode placements to incorporate prefrontal alpha asymmetry for a more nuanced emotional response measurement. |
-| **Not Multimodal** | Only EEG data is currently measured. This makes it difficult to cleanly separate EEG changes that may be due to attention, eye state, movement, or general arousal. | Add **eye tracking** to know what the viewer is looking at, and incorporate **heart rate** and **skin conductance** to provide a direct body arousal signal. |
-| **No ERPs (No Event Markers)** | The video events were not time-locked with the EEG recording. This prevents the ability to measure **Event-Related Potentials (ERPs)**, which are fast brain responses to specific moments (like a cut, reveal, or jump scare). | Implement exact timestamps for video events to measure P300-style effects and other fast brain responses. |
-| **Bandpower Only** | The model uses only bandpower features (energy in alpha, beta, gamma bands), discarding complex interactions. | Utilize raw EEG data to compute **cross-coupling**, where one frequency band’s rhythm modulates another band’s strength (e.g., theta phase controlling gamma amplitude). |
-
-## Scalability and Business Model
-
-The project has a phased approach for market entry and scaling:
-
-1.  **Short Term (Data Collection & Validation):** Sell the experience to **exhibitions, experience parks, and immersive venues**. This generates early revenue and, crucially, feeds proprietary neuro-engagement data back into the model for fine-tuning.
-2.  **Medium Term (Integration):** Partner with consumer EEG device providers (e.g., **Muse** and others) to integrate the video player functionality directly into existing EEG apps. This leverages the growing at-home adoption of EEG devices.
-3.  **Long Term (Widespread Adoption):** As consumer EEG technology becomes democratized (e.g., via EEG earbuds like NextSense or potential AirPod patents), sell the core algorithm and technology to major **streaming platforms** (like Netflix or Amazon Prime Video) and virtual reality experience providers to reach a wider consumer base.
-
+```bash
+pip install flask flask-cors requests
 ```
+
+*(Note: `eeg.py` requires additional dependencies depending on the EEG hardware SDK used).*
+
+### 2. Start the Server
+Run the Flask bridge server:
+
+```bash
+python server.py
+```
+
+It will start running on `http://localhost:5000`.
+
+### 3. Open the Player
+Launch `http://localhost:5000` in Google Chrome and enter full screen. Click "Begin Session" to start the experience.
+
+### 4. Run the EEG Integration
+Run `eeg.py` while the headset is connected. It will analyze the user's brainwaves and automatically trigger the branching video at the right moment.
+
+```bash
+python eeg.py
+```
+
+## 📈 Roadmap & Scalability
+- **Phase 1 (Experiential):** Deploy at exhibitions, experience parks, and immersive VR venues. We get paid to build our training set.
+- **Phase 2 (Integration):** Partner with consumer EEG apps. Give the 1M+ owners of devices like Muse a new reason to use their headsets by adding neuro-responsive video playback.
+- **Phase 3 (Mass Market):** License our algorithm to major streaming platforms and virtual reality providers as at-home biometric wearable adoption grows.
+
+## 🚧 Limitations & Future Work
+- **No Prefrontal EEG (Alpha Asymmetry):** Current 8-channel headsets lack F3/F4 channels. We cannot measure approach/avoid emotional signals yet.
+- **Not Multimodal:** We currently rely exclusively on EEG. Integrating eye tracking or heart rate would isolate true attention from ocular artifacts or general arousal.
+- **No Event-Related Potentials (ERPs):** Data is not yet time-locked to specific timestamped video events (e.g., jump scares), preventing P300-style instant response tracking.
+- **Bandpower Only:** The model evaluates generic bandpower features instead of raw cross-frequency coupling (like theta phase modulating gamma amplitude).
